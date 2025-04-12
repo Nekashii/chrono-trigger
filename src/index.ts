@@ -4,6 +4,8 @@ import { getEventsHandler } from './handlers/get-events.handler'
 
 export default {
   async fetch(req, env, ctx) {
+    if (req.headers.get('Authorization') !== env.AUTH_TOKEN) return new Response(undefined, { status: 401 })
+
     const handler: ExportedHandlerFetchHandler<Env> =
       {
         GET: env.PRODUCTION === 'false' ? getEventsHandler : undefined,
