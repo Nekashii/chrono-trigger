@@ -8,7 +8,7 @@ export const getEventsHandler: ExportedHandlerFetchHandler<Env> = async (req, en
 
   const event = await eventService.findById(id)
 
-  if (!event) return new Response(undefined, { status: 404 })
+  if (!event) return new Response('event not found', { status: 404 })
 
   return Response.json(event)
 }

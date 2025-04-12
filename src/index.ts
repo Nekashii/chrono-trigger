@@ -7,14 +7,14 @@ import { roundToPrecision } from './utils/timestamp.util'
 
 export default {
   async fetch(req, env, ctx) {
-    if (req.headers.get('Authorization') !== env.AUTH_TOKEN) return new Response(undefined, { status: 401 })
+    if (req.headers.get('Authorization') !== env.AUTH_TOKEN) return new Response('unauthenticated', { status: 401 })
 
     const handler: ExportedHandlerFetchHandler<Env> =
       {
         GET: env.PRODUCTION === 'false' ? getEventsHandler : undefined,
         POST: createEventHandler,
         DELETE: deleteEventHandler,
-      }[req.method] ?? (() => new Response(undefined, { status: 405 }))
+      }[req.method] ?? (() => new Response('method not allowed', { status: 405 }))
 
     return handler(req, env, ctx)
   },
