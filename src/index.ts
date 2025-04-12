@@ -1,6 +1,9 @@
 import { createEventHandler } from './handlers/create-event.handler'
 import { deleteEventHandler } from './handlers/delete-event.handler'
 import { getEventsHandler } from './handlers/get-events.handler'
+import { triggerEventHandler } from './handlers/trigger-event.handler'
+import { EventService } from './services/event.service'
+import { roundToPrecision } from './utils/timestamp.util'
 
 export default {
   async fetch(req, env, ctx) {
@@ -16,8 +19,24 @@ export default {
     return handler(req, env, ctx)
   },
 
-  async scheduled(event, env, ctx): Promise<void> {
-    const time = Math.round(event.scheduledTime / 60 / 15) * 60 * 15
-    console.log(time)
+  async scheduled(event, env): Promise<void> {
+    const timestamp = roundToPrecision(event.scheduledTime)
+
+    const eventService = new EventService(env)
+
+    const events = await eventService.getByTimestamp(timestamp)
+
+    await Promise.all([
+      ...events.map(event => triggerEventHandler(event, env)),
+      eventService.batch(
+        events.map(event => {
+          const { triggerEvery } = event
+
+          if (triggerEvery) event.nextTriggerAt = timestamp + roundToPrecision(triggerEvery)
+
+          return [event, triggerEvery ? 'update' : 'delete']
+        })
+      ),
+    ])
   },
 } satisfies ExportedHandler<Env>
