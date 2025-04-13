@@ -1,13 +1,7 @@
-import { HttpMethod } from '../types/http-method.type'
+import { IncomingWebhookDto } from './incoming-webhook.dto'
 
 export interface IncomingEventDto {
   firstTriggerAt?: number
   triggerEvery?: number
-  webhook: {
-    url: string
-    method: HttpMethod
-    params?: Record<string, string>
-    headers?: Record<string, string>
-    body?: string
-  }
+  webhook: IncomingWebhookDto
 }

@@ -1,7 +1,9 @@
 import { IncomingEventDto } from '../dtos/incoming-event.dto'
+import { WebhookMapper } from '../mappers/webhook.mapper'
 import { EventService } from '../services/event.service'
 import { roundToPrecision } from '../utils/timestamp.util'
 import { validateEvent } from '../utils/validators.util'
+import { triggerEventHandler } from './trigger-event.handler'
 
 export const createEventHandler: ExportedHandlerFetchHandler<Env> = async (req, env) => {
   let incomingEvent: IncomingEventDto
@@ -18,7 +20,10 @@ export const createEventHandler: ExportedHandlerFetchHandler<Env> = async (req, 
 
   const eventService = new EventService(env)
 
-  const id = await eventService.create(incomingEvent)
+  const [id] = await Promise.all([
+    eventService.create(incomingEvent),
+    ...(incomingEvent.firstTriggerAt ? [] : [triggerEventHandler(WebhookMapper.fromIncoming(incomingEvent.webhook), env)]),
+  ])
 
   return new Response(id)
 }

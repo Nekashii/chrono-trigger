@@ -27,7 +27,7 @@ export default {
     const events = await eventService.getByTimestamp(timestamp)
 
     await Promise.all([
-      ...events.map(event => triggerEventHandler(event, env)),
+      ...events.map(({ webhook }) => triggerEventHandler(webhook, env)),
       eventService.batch(
         events.map(event => {
           const { triggerEvery } = event
