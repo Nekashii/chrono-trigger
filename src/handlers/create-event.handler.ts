@@ -8,9 +8,9 @@ export const createEventHandler: ExportedHandlerFetchHandler<Env> = async (req, 
 
   try {
     incomingEvent = await req.json()
-    if (!validateEvent(incomingEvent)) return new Response('invalid payload')
+    if (!validateEvent(incomingEvent)) return new Response('invalid payload', { status: 400 })
   } catch (error) {
-    return new Response('missing payload')
+    return new Response('missing payload', { status: 400 })
   }
 
   if (incomingEvent.firstTriggerAt && roundToPrecision(incomingEvent.firstTriggerAt) < roundToPrecision(new Date().getTime(), 'ceil'))

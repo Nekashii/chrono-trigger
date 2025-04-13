@@ -9,5 +9,5 @@ export const deleteEventHandler: ExportedHandlerFetchHandler<Env> = async (req, 
 
   await eventService.delete(id)
 
-  return new Response()
+  return new Response('deleted')
 }
