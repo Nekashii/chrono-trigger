@@ -12,5 +12,6 @@
       "database_name": "chrono-trigger-db",
       "database_id": "e21321a6-330d-46bc-9262-4d18f4e022c3"
     }
-  ]
+  ],
+  "keep_vars": true
 }
