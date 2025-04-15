@@ -28,15 +28,19 @@ export default {
 
     await Promise.all([
       ...events.map(({ webhook }) => triggerEventHandler(webhook, env)),
-      eventService.batch(
-        events.map(event => {
-          const { triggerEvery } = event
+      ...(events.length
+        ? [
+            eventService.batch(
+              events.map(event => {
+                const { triggerEvery } = event
 
-          if (triggerEvery) event.nextTriggerAt = timestamp + roundToPrecision(triggerEvery)
+                if (triggerEvery) event.nextTriggerAt = timestamp + roundToPrecision(triggerEvery)
 
-          return [event, triggerEvery ? 'update' : 'delete']
-        })
-      ),
+                return [event, triggerEvery ? 'update' : 'delete']
+              })
+            ),
+          ]
+        : []),
     ])
   },
 } satisfies ExportedHandler<Env>
