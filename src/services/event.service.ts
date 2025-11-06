@@ -116,14 +116,15 @@ export class EventService {
       .prepare(
         `
           UPDATE events
-          SET first_trigger_at = ?
-          SET next_trigger_at = ?
-          SET trigger_every = ?
-          SET webhook_url = ?
-          SET webhook_method = ?
-          SET webhook_params = ?
-          SET webhook_headers = ?
-          SET webhook_body = ?
+          SET 
+            first_trigger_at = ?,
+            next_trigger_at = ?,
+            trigger_every = ?,
+            webhook_url = ?,
+            webhook_method = ?,
+            webhook_params = ?,
+            webhook_headers = ?,
+            webhook_body = ?
           WHERE id = ?
         `
       )
